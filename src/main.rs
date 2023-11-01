@@ -3,9 +3,10 @@ use std::{thread::sleep, time};
 use crate::patterns::*;
 mod patterns;
 
-const WIDTH: usize = 79;
+const WIDTH: usize = 80;
 const HEIGHT: usize = 60;
 const TIME_DELAY_MILISECONDS: u64 = 50;
+const NUM_OPERATIONS: usize = 1000;
 
 fn main() {
     let mut state = State::new();
@@ -16,7 +17,8 @@ fn main() {
     state.print_display();
     stdin().read(&mut [0]).unwrap();
 
-    for _ in 0..300 {
+    // iterate
+    for _ in 0..NUM_OPERATIONS {
         state.progress();
         sleep(time::Duration::from_millis(TIME_DELAY_MILISECONDS));
         clearscreen::clear().expect("failed to clear screen");
