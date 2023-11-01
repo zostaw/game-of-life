@@ -1,6 +1,6 @@
+use crate::patterns::*;
 use std::io::{stdin, Read};
 use std::{thread::sleep, time};
-use crate::patterns::*;
 mod patterns;
 
 const WIDTH: usize = 80;
@@ -87,16 +87,16 @@ impl State {
 
             let range_vertical = match line_id {
                 0 => 0..=1,
-                line_id if line_id == max_height => (line_id-1)..=line_id,
-                _ => (line_id-1)..=(line_id+1),
+                line_id if line_id == max_height => (line_id - 1)..=line_id,
+                _ => (line_id - 1)..=(line_id + 1),
             };
 
             for id in range_vertical {
                 let line_checking = lines.get(id).map(|line| Some(line)).unwrap();
                 let range_horizontal = match point_id {
                     0 => 0..=1,
-                    point_id if point_id == max_width => (point_id-1)..=point_id,
-                    _ => (point_id-1)..=(point_id+1),
+                    point_id if point_id == max_width => (point_id - 1)..=point_id,
+                    _ => (point_id - 1)..=(point_id + 1),
                 };
 
                 for id in range_horizontal {
@@ -123,5 +123,3 @@ impl State {
         }
     }
 }
-
-
