@@ -2,6 +2,7 @@
 
 This is implementation of game of life in rust.
 It prints the window in a terminal line-by-line, hence it's not recommended to use too big dimensions.
+In general they should not extend over number of lines in terminal, otherwise the generation will be cut.
 
 # Running
 
