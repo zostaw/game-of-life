@@ -1,7 +1,12 @@
-use crate::patterns::*;
+extern crate serde;
+extern crate serde_json;
+extern crate serde_derive;
+
+use std::fs::File;
+use std::env;
+use std::io::BufReader;
 use std::io::{stdin, Read};
 use std::{thread::sleep, time};
-mod patterns;
 
 const WIDTH: usize = 80;
 const HEIGHT: usize = 60;
@@ -9,13 +14,19 @@ const TIME_DELAY_MILISECONDS: u64 = 50;
 const NUM_OPERATIONS: usize = 1000;
 
 fn main() {
+
+    let args: Vec<String> = env::args().collect();
+
+    let pattern_file = &args[1];
+
     let mut state = State::new();
-    pattern5(&mut state);
+    state.lines = state.load_pattern(pattern_file).unwrap();
 
     // present starting position with awaiting Enter
     clearscreen::clear().expect("failed to clear screen");
     state.print_display();
     stdin().read(&mut [0]).unwrap();
+
 
     // iterate
     for _ in 0..NUM_OPERATIONS {
@@ -24,7 +35,9 @@ fn main() {
         clearscreen::clear().expect("failed to clear screen");
         state.print_display();
     }
+
 }
+
 
 pub struct State {
     lines: [[bool; WIDTH]; HEIGHT],
@@ -49,6 +62,22 @@ impl State {
             }
             println!("");
         }
+    }
+
+    fn load_pattern(&mut self, pattern_file: &str) -> Result<[[bool; WIDTH]; HEIGHT], Box<dyn std::error::Error>> {
+        println!("loading {}", pattern_file);
+        let file = File::open(pattern_file).expect("Argument should be path to file, but cannot be read.");
+        let reader = BufReader::new(file);
+
+        let iterator: Vec<[usize; 2]> = serde_json::from_reader(reader)?;
+        let mut lines = self.lines;
+
+        for pixel in iterator {
+            lines[pixel[0]][pixel[1]] = true;
+        }
+
+
+        Ok(lines)
     }
 
     fn progress(&mut self) {
