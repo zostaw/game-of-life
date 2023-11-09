@@ -29,7 +29,7 @@ In general they should not extend over number of lines in terminal, otherwise th
 
     i.e.:
     ```
-    ./target/release/game-of-life "examples/pattern5.json"
+    ./target/release/game-of-life "examples/glider.json"
     ```
 
 
