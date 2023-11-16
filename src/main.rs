@@ -1,9 +1,10 @@
 extern crate serde;
-extern crate serde_json;
 extern crate serde_derive;
+extern crate serde_json;
 
-use std::fs::File;
+use colored::Colorize;
 use std::env;
+use std::fs::File;
 use std::io::BufReader;
 use std::io::{stdin, Read};
 use std::{thread::sleep, time};
@@ -14,7 +15,6 @@ const TIME_DELAY_MILISECONDS: u64 = 50;
 const NUM_OPERATIONS: usize = 1000;
 
 fn main() {
-
     let args: Vec<String> = env::args().collect();
 
     let pattern_file = &args[1];
@@ -27,7 +27,6 @@ fn main() {
     state.print_display();
     stdin().read(&mut [0]).unwrap();
 
-
     // iterate
     for _ in 0..NUM_OPERATIONS {
         state.progress();
@@ -35,9 +34,7 @@ fn main() {
         clearscreen::clear().expect("failed to clear screen");
         state.print_display();
     }
-
 }
-
 
 pub struct State {
     lines: [[bool; WIDTH]; HEIGHT],
@@ -55,7 +52,7 @@ impl State {
         for line_id in 0..HEIGHT {
             for symbol_id in 0..WIDTH {
                 if lines[line_id][symbol_id] == true {
-                    print!("*");
+                    print!("{}", " ".on_yellow());
                 } else {
                     print!(" ");
                 }
@@ -64,9 +61,13 @@ impl State {
         }
     }
 
-    fn load_pattern(&mut self, pattern_file: &str) -> Result<[[bool; WIDTH]; HEIGHT], Box<dyn std::error::Error>> {
+    fn load_pattern(
+        &mut self,
+        pattern_file: &str,
+    ) -> Result<[[bool; WIDTH]; HEIGHT], Box<dyn std::error::Error>> {
         println!("loading {}", pattern_file);
-        let file = File::open(pattern_file).expect("Argument should be path to file, but cannot be read.");
+        let file =
+            File::open(pattern_file).expect("Argument should be path to file, but cannot be read.");
         let reader = BufReader::new(file);
 
         let iterator: Vec<[usize; 2]> = serde_json::from_reader(reader)?;
@@ -75,7 +76,6 @@ impl State {
         for pixel in iterator {
             lines[pixel[0]][pixel[1]] = true;
         }
-
 
         Ok(lines)
     }
