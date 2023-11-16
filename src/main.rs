@@ -2,16 +2,22 @@ extern crate serde;
 extern crate serde_derive;
 extern crate serde_json;
 
-use colored::Colorize;
+use crossterm::{
+    cursor, execute, queue,
+    style::{self, Stylize},
+    terminal::{BeginSynchronizedUpdate, EndSynchronizedUpdate},
+    terminal::{Clear, ClearType},
+};
 use std::env;
 use std::fs::File;
+use std::io::stdout;
 use std::io::BufReader;
 use std::io::{stdin, Read};
 use std::{thread::sleep, time};
 
 const WIDTH: usize = 80;
-const HEIGHT: usize = 60;
-const TIME_DELAY_MILISECONDS: u64 = 50;
+const HEIGHT: usize = 50;
+const TIME_DELAY_MILISECONDS: u64 = 100;
 const NUM_OPERATIONS: usize = 1000;
 
 fn main() {
@@ -49,15 +55,22 @@ impl State {
 
     fn print_display(&self) {
         let lines = self.lines;
+        let mut stdout = stdout();
+        execute!(stdout, BeginSynchronizedUpdate).unwrap();
+
+        // TODO: optimization - only go to places that need to be reprinted, otherwise don't even
+        // clean
+        queue!(stdout, Clear(ClearType::All)).unwrap();
         for line_id in 0..HEIGHT {
             for symbol_id in 0..WIDTH {
                 if lines[line_id][symbol_id] == true {
-                    print!("{}", " ".on_yellow());
+                    queue!(stdout, style::PrintStyledContent(" ".on_yellow())).unwrap();
                 } else {
-                    print!(" ");
+                    queue!(stdout, style::PrintStyledContent(" ".on_black())).unwrap();
                 }
             }
-            println!("");
+            queue!(stdout, cursor::MoveToNextLine(1)).unwrap();
+            execute!(stdout, EndSynchronizedUpdate).unwrap();
         }
     }
 
