@@ -66,7 +66,7 @@ impl State {
                 if lines[line_id][symbol_id] == true {
                     queue!(stdout, style::PrintStyledContent(" ".on_yellow())).unwrap();
                 } else {
-                    queue!(stdout, style::PrintStyledContent(" ".on_black())).unwrap();
+                    queue!(stdout, style::Print(" ")).unwrap();
                 }
             }
             queue!(stdout, cursor::MoveToNextLine(1)).unwrap();
